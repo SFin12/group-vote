@@ -10,7 +10,7 @@ const Header: React.FC = () => {
     router.pathname === pathname;
 
   const { data: session, status } = useSession();
-
+  
   let left = (
     <div className="left">
       <Link href="/">
