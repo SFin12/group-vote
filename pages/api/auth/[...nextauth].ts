@@ -8,10 +8,10 @@ import GitHubProvider from 'next-auth/providers/github';
 import prisma from '../../../lib/prisma';
 import GoogleProvider from "next-auth/providers/google";
 
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
-export default authHandler;
 
-const options:NextAuthOptions = {
+
+
+export const options: NextAuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
@@ -25,3 +25,6 @@ const options:NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
+export default authHandler;

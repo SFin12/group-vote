@@ -1,86 +1,51 @@
--- CreateTable
-CREATE TABLE "Post" (
-    "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" TEXT,
 
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
-);
+[+] Added tables
+  - Post
+  - Account
+  - Session
+  - Message
+  - User
+  - Group
+  - Item
+  - GroupUser
+  - VerificationToken
+  - _GroupUser
 
--- CreateTable
-CREATE TABLE "Account" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "provider" TEXT NOT NULL,
-    "provider_account_id" TEXT NOT NULL,
-    "refresh_token" TEXT,
-    "access_token" TEXT,
-    "expires_at" INTEGER,
-    "token_type" TEXT,
-    "scope" TEXT,
-    "id_token" TEXT,
-    "session_state" TEXT,
-    "oauth_token_secret" TEXT,
-    "oauth_token" TEXT,
+[*] Changed the `Account` table
+  [+] Added unique index on columns (provider, provider_account_id)
+  [+] Added foreign key on columns (user_id)
 
-    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
-);
+[*] Changed the `Group` table
+  [+] Added unique index on columns (lastWinnerId)
+  [+] Added foreign key on columns (lastWinnerId)
 
--- CreateTable
-CREATE TABLE "Session" (
-    "id" TEXT NOT NULL,
-    "session_token" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
+[*] Changed the `GroupUser` table
+  [+] Added foreign key on columns (groupId)
+  [+] Added foreign key on columns (userId)
 
-    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
-);
+[*] Changed the `Item` table
+  [+] Added foreign key on columns (group_id)
 
--- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "name" TEXT,
-    "email" TEXT,
-    "emailVerified" TIMESTAMP(3),
-    "image" TEXT,
+[*] Changed the `Message` table
+  [+] Added foreign key on columns (session_id)
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
+[*] Changed the `Post` table
+  [+] Added foreign key on columns (authorId)
 
--- CreateTable
-CREATE TABLE "VerificationToken" (
-    "id" SERIAL NOT NULL,
-    "identifier" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
+[*] Changed the `Session` table
+  [+] Added unique index on columns (session_token)
+  [+] Added foreign key on columns (user_id)
 
-    CONSTRAINT "VerificationToken_pkey" PRIMARY KEY ("id")
-);
+[*] Changed the `User` table
+  [+] Added unique index on columns (email)
 
--- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_provider_account_id_key" ON "Account"("provider", "provider_account_id");
+[*] Changed the `VerificationToken` table
+  [+] Added unique index on columns (token)
+  [+] Added unique index on columns (identifier, token)
 
--- CreateIndex
-CREATE UNIQUE INDEX "Session_session_token_key" ON "Session"("session_token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
-
--- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+[*] Changed the `_GroupUser` table
+  [+] Added unique index on columns (A, B)
+  [+] Added index on columns (B)
+  [+] Added foreign key on columns (A)
+  [+] Added foreign key on columns (B)
 

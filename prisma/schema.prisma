@@ -40,22 +40,66 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
-  userId       String   @map("user_id")
+  id           String    @id @default(cuid())
+  sessionToken String    @unique @map("session_token")
+  userId       String    @map("user_id")
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  sessionId String   @map("session_id")
+  session   Session  @relation(fields: [sessionId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   posts         Post[]
   sessions      Session[]
+  groups        Group[]     @relation("GroupUser")
+  GroupUser     GroupUser[]
+}
+
+model Group {
+  id           Int         @id @default(autoincrement())
+  name         String
+  password     String
+  active       Boolean     @default(true)
+  type         String
+  users        User[]      @relation("GroupUser")
+  lastWinner   Item?       @relation("GroupLastWinner", fields: [lastWinnerId], references: [id])
+  lastWinnerId Int?        @unique
+  GroupUser    GroupUser[]
+  items        Item[]
+}
+
+model Item {
+  id              Int    @id @default(autoincrement())
+  type            String
+  name            String
+  groupId         Int    @map("group_id")
+  group           Group  @relation(fields: [groupId], references: [id])
+  GroupLastWinner Group? @relation("GroupLastWinner")
+  wins            Int    @default(0)
+}
+
+model GroupUser {
+  groupId Int   @map("group_id")
+  userId  String @map("user_id")
+  group   Group  @relation(fields: [groupId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
+  votes   Int   @default(1)
+
+  @@id([groupId, userId])
 }
 
 model VerificationToken {

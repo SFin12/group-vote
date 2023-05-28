@@ -18,7 +18,7 @@ const submitData = async (e: React.SyntheticEvent) => {
   if(!session || status !== 'authenticated') return alert('You must be signed in to submit')
 
   try {
-    const body = { title, content, session };
+    const body = { title, content };
     await fetch('/api/post', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
